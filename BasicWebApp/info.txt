@@ -1,0 +1,5 @@
+java and database:
+	https://netbeans.org/kb/docs/web/mysql-webapp.html
+	http://docs.oracle.com/javase/tutorial/jdbc/basics/gettingstarted.html
+	must install connector/j from MySQL
+	
