@@ -25,7 +25,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>Rack</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/racks/*</url-pattern>
  </servlet-mapping>
  </web-app>
  

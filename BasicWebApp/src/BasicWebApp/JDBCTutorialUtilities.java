@@ -285,6 +285,7 @@ public class JDBCTutorialUtilities {
     String currentUrlString = null;
 
     if (this.dbms.equals("mysql")) {
+    	DriverManager.registerDriver(new com.mysql.jdbc.Driver());
       currentUrlString = "jdbc:" + this.dbms + "://" + this.serverName +
                                       ":" + this.portNumber + "/";
       conn =

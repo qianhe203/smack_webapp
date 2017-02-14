@@ -11,6 +11,6 @@
 </head>
 <body>
 This is the homepage!
-<c:out value="${racks.Data}" />
+<!--<c:out value="${racks.Data}" />-->
 </body>
 </html>
