@@ -27,5 +27,13 @@
     <servlet-name>Rack</servlet-name>
     <url-pattern>/racks/*</url-pattern>
  </servlet-mapping>
+ <servlet>
+   <servlet-name>Reserve</servlet-name>
+   <servlet-class>BasicWebApp.Reserve</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Reserve</servlet-name>
+    <url-pattern>/reserve/*</url-pattern>
+ </servlet-mapping>
  </web-app>
  

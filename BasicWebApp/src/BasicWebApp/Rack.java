@@ -24,11 +24,12 @@ public class Rack extends HttpServlet implements java.io.Serializable{
 	public JDBCTutorialUtilities dbConnect(){
 		JDBCTutorialUtilities myUtil;
 		System.out.println("Initializing connection...");
+		System.out.println("Using working dir " + System.getProperty("user.dir"));
 		try {
-	        System.out.println("Reading properties file " + "properties/mysql-sample-properties.xml");
+	        System.out.println("Reading properties file " + "mysql-sample-properties.xml");
 	        myUtil = new JDBCTutorialUtilities("mysql-sample-properties.xml");
 	      } catch (Exception e) {
-	        System.err.println("Problem reading properties file " + "properties/mysql-sample-properties.xml");
+	        System.err.println("Problem reading properties file " + "mysql-sample-properties.xml");
 	        e.printStackTrace();
 	        return null;
 	      }
