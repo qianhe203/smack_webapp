@@ -203,6 +203,49 @@ public class Reserve extends HttpServlet implements java.io.Serializable{
 		    }
 		return false;
 	}
+	public void getTable(ArrayList<Smack> rData, JDBCTutorialUtilities myUtil, Connection conn){
+		 
+	    try {
+	      conn = myUtil.getConnection();
+
+	      Statement stmt = null;
+	      String query = "SELECT * FROM racks";
+	      
+	      try {
+	        stmt = conn.createStatement();
+	        ResultSet rs = stmt.executeQuery(query);
+	        System.out.println("Retrieving data...");
+	        while (rs.next()) {
+	        	//Smack rackData = new Smack(rs.getInt("id"), rs.getString("slot0"), rs.getString("slot1"), rs.getString("slot2"), rs.getString("slot3"));
+	          Smack rack = new Smack();
+	          rack.setRackID(rs.getInt("id"));
+	          rack.setSlot0(rs.getString("slot0"));
+	          rack.setSlot1(rs.getString("slot1"));
+	          rack.setSlot2(rs.getString("slot2"));
+	          rack.setSlot3(rs.getString("slot3"));
+	        	/*int rackID = rs.getInt("id");
+	          String slot0 = rs.getString("slot0");
+	          String slot1 = rs.getString("slot1");
+	          String slot2 = rs.getString("slot2");
+	          String slot3 = rs.getString("slot3");
+	          String rackData = ("Rack: " + rackID + ", Slot 0: " + slot0 + ", Slot 1: " + slot1 + ", Slot 2: " + slot2 + ", Slot 3: " + slot3);
+	          *///System.out.println(rackData);
+	          rData.add(rack);
+	        }
+
+	      } catch (SQLException e) {
+	        JDBCTutorialUtilities.printSQLException(e);
+	      } finally {
+	        if (stmt != null) { stmt.close(); }
+	      }
+	      
+	    } catch (SQLException e) {
+	      JDBCTutorialUtilities.printSQLException(e);
+	    } catch (Exception e) {
+	      e.printStackTrace(System.err);
+	    }
+	    
+	}
 	
 	public void getTable(Smack rack, JDBCTutorialUtilities myUtil, Connection conn, String id){
 		 
@@ -283,24 +326,24 @@ public class Reserve extends HttpServlet implements java.io.Serializable{
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		//ArrayList<Smack> racksData = new ArrayList<Smack>();
-		//JDBCTutorialUtilities myJDBCTutorialUtilities = dbConnect();
-		//Connection myConnection = null;
+		ArrayList<Smack> racksData = new ArrayList<Smack>();
+		JDBCTutorialUtilities myJDBCTutorialUtilities = dbConnect();
+		Connection myConnection = null;
 	    
-	    //this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
+	    this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
 	    //System.out.println(racksData);
 	    
-	    //this.closeConn(myConnection);
+	    this.closeConn(myConnection);
 	    //System.out.println(racksData.get(0).getId());
-		//req.setAttribute("racksData",racksData);
-		//System.out.println(System.currentTimeMillis());
+		req.setAttribute("racksData",racksData);
+		//req.getRequestDispatcher("/racks.jsp").forward(req,resp);
 		req.getRequestDispatcher("/reserve.jsp").forward(req,resp);
 	}
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		Smack rack = new Smack();
+		ArrayList<Smack> racksData = new ArrayList<Smack>();
 		Connection myConnection = null;
 		JDBCTutorialUtilities myJDBCTutorialUtilities = dbConnect();
 		
@@ -355,17 +398,17 @@ public class Reserve extends HttpServlet implements java.io.Serializable{
         	if(!(this.checkTable(myJDBCTutorialUtilities, myConnection, id, slot))){
         		//slot in use
         		messages.put("id", "This slot is currently in use");
-        		this.getTable(rack, myJDBCTutorialUtilities, myConnection, id);
+        		this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
         	}
         	// Check if user already has a reserved slot
         	else if (!(this.checkIP(req, myJDBCTutorialUtilities, myConnection))){
         		messages.put("id", "You cannot reserve multiple slots");
-        		this.getTable(rack, myJDBCTutorialUtilities, myConnection, id);
+        		this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
         	}
         	else{
         		this.updateRacks(myJDBCTutorialUtilities, myConnection, id, slot);
         		this.updateReserve(req, myJDBCTutorialUtilities, myConnection, id, slot, dur);
-        		this.getTable(rack, myJDBCTutorialUtilities, myConnection, id);
+        		this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
         		this.updatePins(req, myJDBCTutorialUtilities, myConnection, id, slot, pin);
         	}
         }
@@ -373,7 +416,7 @@ public class Reserve extends HttpServlet implements java.io.Serializable{
 	    //this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
 	    //System.out.println(racksData);
 	    this.closeConn(myConnection);
-		req.setAttribute("racksData",rack);
+		req.setAttribute("racksData",racksData);
 		req.getRequestDispatcher("/reserve.jsp").forward(req,resp);
 	}
 }
