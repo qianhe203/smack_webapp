@@ -1,0 +1,26 @@
+html,
+body {
+  height: 100%;
+}
+body *,
+body *:before,
+body *:after {
+  box-sizing: inherit;
+}
+svg {
+  max-width: 150px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  visibility: hidden;
+}
+svg + svg {
+  margin-top: 5px;
+}
+text {
+  pointer-events: none;
+}
+
+form input[type="submit"] { display: none;} 
