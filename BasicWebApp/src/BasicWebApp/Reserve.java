@@ -350,62 +350,75 @@ public class Reserve extends HttpServlet implements java.io.Serializable{
 	    // Prepare messages.
         Map<String, String> messages = new HashMap<String, String>();
         req.setAttribute("messages", messages);
-
-        // Get and validate id.
         String id = req.getParameter("id");
+        String slot = req.getParameter("slot");
+        String pin = req.getParameter("pin");
+        String duration = req.getParameter("duration");
+        int dur = 0;
+        try{
+        // Get and validate id.
+        
         if (id == null || id.trim().isEmpty()) {
-            messages.put("id", "Please enter an ID");
+            messages.put("id", "Please enter an ID.");
         } else if (!id.matches("\\d+")) {
-            messages.put("id", "Please enter digits only");
+            messages.put("id", "Please enter digits only.");
+        } else if (Integer.parseInt(id) < 0 || Integer.parseInt(id) > 2){
+        	messages.put("id", "Please enter a valid rack ID.");
         }
 
         // Get and validate slot.
-        String slot = req.getParameter("slot");
+        
         if (slot == null || slot.trim().isEmpty()) {
-            messages.put("slot", "Please enter slot number");
+            messages.put("slot", "Please enter slot number.");
         } else if (!slot.matches("\\d+")) {
-            messages.put("slot", "Please enter digits only");
+            messages.put("slot", "Please enter digits only.");
         } else if (Integer.parseInt(slot) < 0 || Integer.parseInt(slot) > 3){
-        	messages.put("slot", "Please enter a correct slot number");
+        	messages.put("slot", "Please enter a correct slot number.");
         }
         
-        // Get and validate status.
-        String pin = req.getParameter("pin");
+        // Get and validate pin.
+        
         if (pin == null || pin.trim().isEmpty()) {
-            messages.put("pin", "Please enter a PIN");
+            messages.put("pin", "Please enter a PIN.");
         } else if (!pin.matches("\\d+")) {
-            messages.put("pin", "Please enter digits only");
+            messages.put("pin", "Please enter digits only.");
         } else if (pin.toCharArray().length != 4){
-        	messages.put("pin", "Please enter 4 digits");
+        	messages.put("pin", "Please enter 4 digits.");
         }
         
      // Get and validate duration.
-        String duration = req.getParameter("duration");
-        int dur = 0;
+        
+        
         if (duration == null || duration.trim().isEmpty()) {
-            messages.put("duration", "Please enter a time duration in minutes");
+            messages.put("duration", "Please enter a time duration in minutes.");
         } else if (!duration.matches("\\d+")) {
-            messages.put("duration", "Please enter digits only");
+            messages.put("duration", "Please enter digits only.");
         } else if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60){
-        	messages.put("duration", "Please enter a time between 0 and 60 minutes");
+        	messages.put("duration", "Please enter a time between 0 and 60 minutes.");
         } else {
         	dur = Integer.parseInt(duration);
         }
+        } catch (NumberFormatException e){
+        	messages.put("id", "Please don't try to break the server with big numbers.");
+        }
 
         // Check for validation errors.
+        this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
         if (messages.isEmpty()) {
+        	
             // Check for existing reservation entry
         	if(!(this.checkTable(myJDBCTutorialUtilities, myConnection, id, slot))){
         		//slot in use
-        		messages.put("id", "This slot is currently in use");
-        		this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
+        		messages.put("id", "This slot is currently in use.");
+        		//this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
         	}
         	// Check if user already has a reserved slot
         	else if (!(this.checkIP(req, myJDBCTutorialUtilities, myConnection))){
-        		messages.put("id", "You cannot reserve multiple slots");
-        		this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
+        		messages.put("id", "You cannot reserve multiple slots.");
+        		//this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
         	}
         	else{
+        		racksData = new ArrayList<Smack>();
         		this.updateRacks(myJDBCTutorialUtilities, myConnection, id, slot);
         		this.updateReserve(req, myJDBCTutorialUtilities, myConnection, id, slot, dur);
         		this.getTable(racksData, myJDBCTutorialUtilities, myConnection);
